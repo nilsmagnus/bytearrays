@@ -3,9 +3,6 @@ package main
 import (
 	"fmt"
 	"strconv"
-	"strings"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/bep/gr"
 	"github.com/bep/gr/el"
@@ -35,74 +32,25 @@ func (c rawValue) GetInitialState() gr.State {
 
 // Implements the Renderer interface.
 func (c rawValue) Render() gr.Component {
-	rawValue := c.State().String("rawValue")
-	hexOfLong := c.State().String("hexOfLong")
 	longValue, err := strconv.ParseUint(c.State().String("longValue"), 10, 64)
 
 	if err != nil {
 		longValue = 0
 	}
 
-	hexOfLong1 := strings.Replace(hexOfLong, "\\x", "", 20)
-	hexOfLong1 = strings.Replace(hexOfLong1, "0", "", 20)
-	longFromHex, err1 := strconv.ParseUint(hexOfLong1, 16, 64)
-
-	if err1 != nil {
-		longFromHex = 0
-		println(err1)
-	}
-
-	var prettyStringBytes = ""
-
-	for _, b := range []byte(rawValue) {
-		prettyStringBytes = fmt.Sprintf("%s\\x%0X", prettyStringBytes, b)
-	}
-
-	var long2Hex = fmt.Sprintf("%X", longValue)
+	var long2Hex = fmt.Sprintf("%016X", longValue)
 
 	var prettyLongBytes = ""
-	for i := 0; i < 17; i++ {
-		var v = ""
-		if len(long2Hex) < i {
-			v = string('0')
-			println(v)
-			if i == 0 {
-				prettyLongBytes = fmt.Sprintf("%s%s", v, prettyLongBytes)
-			} else if i%2 == 0 {
-				prettyLongBytes = fmt.Sprintf("%s%s", v, prettyLongBytes)
-			} else {
-				prettyLongBytes = fmt.Sprintf("%s\\x%s", v, prettyLongBytes)
-			}
+
+	for k, v := range long2Hex {
+		if k%2 == 1 {
+			prettyLongBytes = fmt.Sprintf("%s%s", prettyLongBytes, string(v))
 		} else {
-			r, _ := utf8.DecodeRuneInString(string(long2Hex[i]))
-			if unicode.IsLetter(r) || unicode.IsNumber(r) {
-				v = string(long2Hex[i])
-				if i == 0 {
-					prettyLongBytes = fmt.Sprintf("%s%s", prettyLongBytes, v)
-				} else if i%2 == 0 {
-					prettyLongBytes = fmt.Sprintf("%s%s", prettyLongBytes, v)
-				} else {
-					prettyLongBytes = fmt.Sprintf("%s\\x%s", prettyLongBytes, v)
-				}
-			}
+			prettyLongBytes = fmt.Sprintf("%s\\x%s", prettyLongBytes, string(v))
 		}
 	}
 
 	elem := el.Div(
-		el.Div(
-			gr.Text("String: "),
-			el.Input(
-				gr.Style("width", "400px"),
-				gr.Prop("type", "text"),
-				gr.Prop("value", rawValue),
-				evt.Change(func(event *gr.Event) {
-					newValue := event.TargetValue()
-					c.SetState(gr.State{"rawValue": newValue})
-				}),
-			),
-			el.Break(),
-			gr.Text(prettyStringBytes),
-		),
 		el.Div(
 			el.Break(),
 			el.Break(),
@@ -121,26 +69,6 @@ func (c rawValue) Render() gr.Component {
 			),
 			el.Break(),
 			gr.Text(prettyLongBytes),
-		),
-
-		el.Div(
-			el.Break(),
-			el.Break(),
-			gr.Text("Hex to long"),
-			el.Break(),
-			gr.Text("Value:"),
-			el.Input(
-				gr.Style("width", "400px"),
-				gr.Prop("type", "text"),
-				gr.Prop("maxLength", "19"),
-				gr.Prop("value", hexOfLong),
-				evt.Change(func(event *gr.Event) {
-					newValue := event.TargetValue()
-					c.SetState(gr.State{"hexOfLong": newValue})
-				}),
-			),
-			el.Break(),
-			gr.Text(longFromHex),
 		),
 	)
 
