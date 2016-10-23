@@ -16811,17 +16811,47 @@ $packages["unicode"] = (function() {
 	return $pkg;
 })();
 $packages["strings"] = (function() {
-	var $pkg = {}, $init, errors, js, io, unicode, utf8, IndexByte, IndexRune, TrimLeftFunc, indexFunc, makeCutsetFunc, TrimLeft;
+	var $pkg = {}, $init, errors, js, io, unicode, utf8, sliceType, IndexByte, Index, Count, IndexRune, TrimLeftFunc, indexFunc, makeCutsetFunc, TrimLeft, Replace;
 	errors = $packages["errors"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	io = $packages["io"];
 	unicode = $packages["unicode"];
 	utf8 = $packages["unicode/utf8"];
+	sliceType = $sliceType($Uint8);
 	IndexByte = function(s, c) {
 		var $ptr, c, s;
 		return $parseInt(s.indexOf($global.String.fromCharCode(c))) >> 0;
 	};
 	$pkg.IndexByte = IndexByte;
+	Index = function(s, sep) {
+		var $ptr, s, sep;
+		return $parseInt(s.indexOf(sep)) >> 0;
+	};
+	$pkg.Index = Index;
+	Count = function(s, sep) {
+		var $ptr, n, pos, s, sep;
+		n = 0;
+		if ((sep.length === 0)) {
+			return utf8.RuneCountInString(s) + 1 >> 0;
+		} else if (sep.length > s.length) {
+			return 0;
+		} else if ((sep.length === s.length)) {
+			if (sep === s) {
+				return 1;
+			}
+			return 0;
+		}
+		while (true) {
+			pos = Index(s, sep);
+			if (pos === -1) {
+				break;
+			}
+			n = n + (1) >> 0;
+			s = s.substring((pos + sep.length >> 0));
+		}
+		return n;
+	};
+	$pkg.Count = Count;
 	IndexRune = function(s, r) {
 		var $ptr, _i, _ref, _rune, c, i, r, s;
 		if (r < 128) {
@@ -16903,6 +16933,42 @@ $packages["strings"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: TrimLeft }; } $f.$ptr = $ptr; $f._r = _r; $f.cutset = cutset; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.TrimLeft = TrimLeft;
+	Replace = function(s, old, new$1, n) {
+		var $ptr, _tuple, i, j, m, n, new$1, old, s, start, t, w, wid;
+		if (old === new$1 || (n === 0)) {
+			return s;
+		}
+		m = Count(s, old);
+		if (m === 0) {
+			return s;
+		} else if (n < 0 || m < n) {
+			n = m;
+		}
+		t = $makeSlice(sliceType, (s.length + ($imul(n, ((new$1.length - old.length >> 0)))) >> 0));
+		w = 0;
+		start = 0;
+		i = 0;
+		while (true) {
+			if (!(i < n)) { break; }
+			j = start;
+			if (old.length === 0) {
+				if (i > 0) {
+					_tuple = utf8.DecodeRuneInString(s.substring(start));
+					wid = _tuple[1];
+					j = j + (wid) >> 0;
+				}
+			} else {
+				j = j + (Index(s.substring(start), old)) >> 0;
+			}
+			w = w + ($copyString($subslice(t, w), s.substring(start, j))) >> 0;
+			w = w + ($copyString($subslice(t, w), new$1)) >> 0;
+			start = j + old.length >> 0;
+			i = i + (1) >> 0;
+		}
+		w = w + ($copyString($subslice(t, w), s.substring(start))) >> 0;
+		return $bytesToString($subslice(t, 0, w));
+	};
+	$pkg.Replace = Replace;
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -18520,12 +18586,13 @@ $packages["github.com/bep/gr/evt"] = (function() {
 	return $pkg;
 })();
 $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
-	var $pkg = {}, $init, fmt, gr, el, evt, strconv, time, rawValue, ptrType, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, main;
+	var $pkg = {}, $init, fmt, gr, el, evt, strconv, strings, time, rawValue, ptrType, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, main, decodeLongFromHex, encodeFromLong;
 	fmt = $packages["fmt"];
 	gr = $packages["github.com/bep/gr"];
 	el = $packages["github.com/bep/gr/el"];
 	evt = $packages["github.com/bep/gr/evt"];
 	strconv = $packages["strconv"];
+	strings = $packages["strings"];
 	time = $packages["time"];
 	rawValue = $pkg.rawValue = $newType(0, $kindStruct, "main.rawValue", true, "bitbucket.org/nilsmagnus/hbaseutils", false, function(This_) {
 		this.$val = this;
@@ -18562,23 +18629,37 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 	rawValue.ptr.prototype.GetInitialState = function() {
 		var $ptr, c;
 		c = $clone(this, rawValue);
-		return $makeMap($String.keyFor, [{ k: "longValue", v: new $String("1477161227964") }]);
+		return $makeMap($String.keyFor, [{ k: "longValue", v: new $String("1477161227964") }, { k: "longAsHex", v: new $String("\\x00\\x00\\x01\\x57\\xED\\xAB\\x96\\xBC") }]);
 	};
 	rawValue.prototype.GetInitialState = function() { return this.$val.GetInitialState(); };
-	rawValue.ptr.prototype.Render = function() {
-		var $ptr, _arg, _arg$1, _arg$2, _arg$3, _arg$4, _arg$5, _arg$6, _i, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _rune, _tuple, c, elem, err, k, long2Hex, longValue, prettyLongBytes, v, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _arg$6 = $f._arg$6; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _rune = $f._rune; _tuple = $f._tuple; c = $f.c; elem = $f.elem; err = $f.err; k = $f.k; long2Hex = $f.long2Hex; longValue = $f.longValue; prettyLongBytes = $f.prettyLongBytes; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		c = [c];
-		c[0] = $clone(this, rawValue);
-		_tuple = strconv.ParseUint(new gr.State(c[0].This.State()).String("longValue"), 10, 64);
-		longValue = _tuple[0];
+	decodeLongFromHex = function(hex) {
+		var $ptr, _r, _r$1, _r$2, _r$3, _tuple, err, hex, purified, res, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _tuple = $f._tuple; err = $f.err; hex = $f.hex; purified = $f.purified; res = $f.res; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r = strings.TrimLeft(strings.Replace(hex, "\\x", "", 100), "0"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		purified = _r;
+		_r$1 = fmt.Sprint(new sliceType$2([new $String("0x"), new $String(purified)])); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_r$2 = strconv.ParseUint(_r$1, 0, 64); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_tuple = _r$2;
+		res = _tuple[0];
 		err = _tuple[1];
-		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			longValue = new $Uint64(0, 0);
-		}
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 4; continue; }
+		/* */ $s = 5; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 4:
+			_r$3 = err.Error(); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			console.log(_r$3);
+			$s = -1; return new $Uint64(0, 0);
+			return new $Uint64(0, 0);
+		/* } */ case 5:
+		$s = -1; return res;
+		return res;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: decodeLongFromHex }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._tuple = _tuple; $f.err = err; $f.hex = hex; $f.purified = purified; $f.res = res; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	encodeFromLong = function(longValue) {
+		var $ptr, _i, _r, _r$1, _r$2, _r$3, _ref, _rune, k, long2Hex, longValue, prettyLongBytes, v, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _ref = $f._ref; _rune = $f._rune; k = $f.k; long2Hex = $f.long2Hex; longValue = $f.longValue; prettyLongBytes = $f.prettyLongBytes; v = $f.v; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		prettyLongBytes = "";
 		_r = fmt.Sprintf("%016X", new sliceType$2([longValue])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		long2Hex = _r;
-		prettyLongBytes = "";
 		_ref = long2Hex;
 		_i = 0;
 		/* while (true) { */ case 2:
@@ -18598,39 +18679,76 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 			/* } */ case 6:
 			_i += _rune[1];
 		/* } */ $s = 2; continue; case 3:
-		_r$4 = fmt.Sprint(new sliceType$2([new $String("Current time in millis: "), $div64(time.Now().UnixNano(), new $Int64(0, 1000000), false)])); /* */ $s = 9; case 9: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-		_r$5 = gr.Text(new $String(_r$4)); /* */ $s = 10; case 10: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-		_r$6 = el.Div(new sliceType$3([_r$5])); /* */ $s = 11; case 11: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
-		_arg = _r$6;
-		_r$7 = el.Break(new sliceType$3([])); /* */ $s = 12; case 12: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
-		_arg$1 = _r$7;
-		_r$8 = gr.Text(new $String("Enter long value:")); /* */ $s = 13; case 13: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
-		_arg$2 = _r$8;
-		_r$9 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("maxLength", new $String("19")), gr.Prop("value", longValue), evt.Change((function(c) { return function(event) {
+		$s = -1; return prettyLongBytes;
+		return prettyLongBytes;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: encodeFromLong }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._ref = _ref; $f._rune = _rune; $f.k = k; $f.long2Hex = long2Hex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	rawValue.ptr.prototype.Render = function() {
+		var $ptr, _arg, _arg$1, _arg$10, _arg$2, _arg$3, _arg$4, _arg$5, _arg$6, _arg$7, _arg$8, _arg$9, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _tuple, c, decodedLongValue, elem, err, longAsHex, longValue, prettyLongBytes, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$10 = $f._arg$10; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _arg$6 = $f._arg$6; _arg$7 = $f._arg$7; _arg$8 = $f._arg$8; _arg$9 = $f._arg$9; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _tuple = $f._tuple; c = $f.c; decodedLongValue = $f.decodedLongValue; elem = $f.elem; err = $f.err; longAsHex = $f.longAsHex; longValue = $f.longValue; prettyLongBytes = $f.prettyLongBytes; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		c = [c];
+		c[0] = $clone(this, rawValue);
+		_tuple = strconv.ParseUint(new gr.State(c[0].This.State()).String("longValue"), 10, 64);
+		longValue = _tuple[0];
+		err = _tuple[1];
+		longAsHex = new gr.State(c[0].This.State()).String("longAsHex");
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 1:
+			_r = err.Error(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			console.log(_r);
+			longValue = new $Uint64(0, 0);
+		/* } */ case 2:
+		_r$1 = encodeFromLong(longValue); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		prettyLongBytes = _r$1;
+		_r$2 = decodeLongFromHex(longAsHex); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		decodedLongValue = _r$2;
+		_r$3 = fmt.Sprintf("Current time in millis: %d (%v)", new sliceType$2([$div64(time.Now().UnixNano(), new $Int64(0, 1000000), false), (x = time.Now(), new x.constructor.elem(x))])); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$4 = gr.Text(new $String(_r$3)); /* */ $s = 7; case 7: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		_r$5 = el.Div(new sliceType$3([_r$4])); /* */ $s = 8; case 8: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+		_arg = _r$5;
+		_r$6 = el.Break(new sliceType$3([])); /* */ $s = 9; case 9: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+		_arg$1 = _r$6;
+		_r$7 = gr.Text(new $String("Long to hbase hex:")); /* */ $s = 10; case 10: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+		_arg$2 = _r$7;
+		_r$8 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("maxLength", new $String("19")), gr.Prop("value", longValue), evt.Change((function(c) { return function(event) {
 			var $ptr, event, newValue;
 			newValue = event.TargetValue();
 			c[0].This.SetState($makeMap($String.keyFor, [{ k: "longValue", v: new $jsObjectPtr(newValue) }]));
-		}; })(c))])); /* */ $s = 14; case 14: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
-		_arg$3 = _r$9;
-		_r$10 = el.Break(new sliceType$3([])); /* */ $s = 15; case 15: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+		}; })(c))])); /* */ $s = 11; case 11: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+		_arg$3 = _r$8;
+		_r$9 = fmt.Sprintf("=> %s", new sliceType$2([new $String(prettyLongBytes)])); /* */ $s = 12; case 12: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
+		_r$10 = gr.Text(new $String(_r$9)); /* */ $s = 13; case 13: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
 		_arg$4 = _r$10;
-		_r$11 = fmt.Sprintf("Result: %s", new sliceType$2([new $String(prettyLongBytes)])); /* */ $s = 16; case 16: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
-		_r$12 = gr.Text(new $String(_r$11)); /* */ $s = 17; case 17: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
-		_arg$5 = _r$12;
-		_r$13 = el.Div(new sliceType$3([_arg$1, _arg$2, _arg$3, _arg$4, _arg$5])); /* */ $s = 18; case 18: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
-		_arg$6 = _r$13;
-		_r$14 = el.Div(new sliceType$3([_arg, _arg$6])); /* */ $s = 19; case 19: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
-		elem = _r$14;
+		_r$11 = el.Div(new sliceType$3([_arg$2, _arg$3, _arg$4])); /* */ $s = 14; case 14: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
+		_arg$5 = _r$11;
+		_r$12 = el.Break(new sliceType$3([])); /* */ $s = 15; case 15: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+		_arg$6 = _r$12;
+		_r$13 = gr.Text(new $String("Hbase hex to long:")); /* */ $s = 16; case 16: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
+		_arg$7 = _r$13;
+		_r$14 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("value", new $String(longAsHex)), evt.Change((function(c) { return function(event) {
+			var $ptr, event, newValue;
+			newValue = event.TargetValue();
+			c[0].This.SetState($makeMap($String.keyFor, [{ k: "longAsHex", v: new $jsObjectPtr(newValue) }]));
+		}; })(c))])); /* */ $s = 17; case 17: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
+		_arg$8 = _r$14;
+		_r$15 = fmt.Sprintf("=> %d", new sliceType$2([decodedLongValue])); /* */ $s = 18; case 18: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+		_r$16 = gr.Text(new $String(_r$15)); /* */ $s = 19; case 19: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+		_arg$9 = _r$16;
+		_r$17 = el.Div(new sliceType$3([_arg$7, _arg$8, _arg$9])); /* */ $s = 20; case 20: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+		_arg$10 = _r$17;
+		_r$18 = el.Div(new sliceType$3([_arg, _arg$1, _arg$5, _arg$6, _arg$10])); /* */ $s = 21; case 21: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+		elem = _r$18;
 		$s = -1; return elem;
 		return elem;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: rawValue.ptr.prototype.Render }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._arg$6 = _arg$6; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._rune = _rune; $f._tuple = _tuple; $f.c = c; $f.elem = elem; $f.err = err; $f.k = k; $f.long2Hex = long2Hex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: rawValue.ptr.prototype.Render }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$10 = _arg$10; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._arg$6 = _arg$6; $f._arg$7 = _arg$7; $f._arg$8 = _arg$8; $f._arg$9 = _arg$9; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._tuple = _tuple; $f.c = c; $f.decodedLongValue = decodedLongValue; $f.elem = elem; $f.err = err; $f.longAsHex = longAsHex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	rawValue.prototype.Render = function() { return this.$val.Render(); };
 	rawValue.ptr.prototype.ShouldComponentUpdate = function(next) {
 		var $ptr, c, next;
 		next = $clone(next, gr.Cops);
 		c = $clone(this, rawValue);
-		return new gr.State(c.This.State()).HasChanged(next.State, new sliceType$4(["longValue"]));
+		return new gr.State(c.This.State()).HasChanged(next.State, new sliceType$4(["longValue"])) || new gr.State(c.This.State()).HasChanged(next.State, new sliceType$4(["longAsHex"]));
 	};
 	rawValue.prototype.ShouldComponentUpdate = function(next) { return this.$val.ShouldComponentUpdate(next); };
 	rawValue.methods = [{prop: "GetInitialState", name: "GetInitialState", pkg: "", typ: $funcType([], [gr.State], false)}, {prop: "Render", name: "Render", pkg: "", typ: $funcType([], [gr.Component], false)}, {prop: "ShouldComponentUpdate", name: "ShouldComponentUpdate", pkg: "", typ: $funcType([gr.Cops], [$Bool], false)}];
@@ -18643,13 +18761,14 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 		$r = el.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = evt.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = strconv.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = time.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ if ($pkg === $mainPkg) { $s = 7; continue; }
-		/* */ $s = 8; continue;
-		/* if ($pkg === $mainPkg) { */ case 7:
-			$r = main(); /* */ $s = 9; case 9: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = strings.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = time.$init(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ if ($pkg === $mainPkg) { $s = 8; continue; }
+		/* */ $s = 9; continue;
+		/* if ($pkg === $mainPkg) { */ case 8:
+			$r = main(); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			$mainFinished = true;
-		/* } */ case 8:
+		/* } */ case 9:
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;

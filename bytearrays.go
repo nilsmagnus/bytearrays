@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bep/gr"
@@ -25,21 +26,24 @@ type rawValue struct {
 func (c rawValue) GetInitialState() gr.State {
 	return gr.State{
 		"longValue": "1477161227964",
+		"longAsHex": "\\x00\\x00\\x01\\x57\\xED\\xAB\\x96\\xBC",
 	}
 }
 
-// Implements the Renderer interface.
-func (c rawValue) Render() gr.Component {
-	longValue, err := strconv.ParseUint(c.State().String("longValue"), 10, 64)
-
+func decodeLongFromHex(hex string) uint64 {
+	purified := strings.TrimLeft(strings.Replace(hex, "\\x", "", 100), "0")
+	res, err := strconv.ParseUint(fmt.Sprint("0x", purified), 0, 64)
 	if err != nil {
-		longValue = 0
+		println(err.Error())
+		return 0
 	}
+	return res
+}
 
-	var long2Hex = fmt.Sprintf("%016X", longValue)
-
+func encodeFromLong(longValue uint64) string {
 	var prettyLongBytes = ""
 
+	var long2Hex = fmt.Sprintf("%016X", longValue)
 	for k, v := range long2Hex {
 		if k%2 == 1 {
 			prettyLongBytes = fmt.Sprintf("%s%s", prettyLongBytes, string(v))
@@ -48,13 +52,29 @@ func (c rawValue) Render() gr.Component {
 		}
 	}
 
+	return prettyLongBytes
+}
+
+// Implements the Renderer interface.
+func (c rawValue) Render() gr.Component {
+	longValue, err := strconv.ParseUint(c.State().String("longValue"), 10, 64)
+	longAsHex := c.State().String("longAsHex")
+
+	if err != nil {
+		println(err.Error())
+		longValue = 0
+	}
+
+	prettyLongBytes := encodeFromLong(longValue)
+	decodedLongValue := decodeLongFromHex(longAsHex)
+
 	elem := el.Div(
 		el.Div(
-			gr.Text(fmt.Sprint("Current time in millis: ", time.Now().UnixNano()/1000000)),
+			gr.Text(fmt.Sprintf("Current time in millis: %d (%v)", time.Now().UnixNano()/1000000, time.Now())),
 		),
+		el.Break(),
 		el.Div(
-			el.Break(),
-			gr.Text("Enter long value:"),
+			gr.Text("Long to hbase hex:"),
 			el.Input(
 				gr.Style("width", "400px"),
 				gr.Prop("type", "text"),
@@ -65,8 +85,21 @@ func (c rawValue) Render() gr.Component {
 					c.SetState(gr.State{"longValue": newValue})
 				}),
 			),
-			el.Break(),
-			gr.Text(fmt.Sprintf("Result: %s", prettyLongBytes)),
+			gr.Text(fmt.Sprintf("=> %s", prettyLongBytes)),
+		),
+		el.Break(),
+		el.Div(
+			gr.Text("Hbase hex to long:"),
+			el.Input(
+				gr.Style("width", "400px"),
+				gr.Prop("type", "text"),
+				gr.Prop("value", longAsHex),
+				evt.Change(func(event *gr.Event) {
+					newValue := event.TargetValue()
+					c.SetState(gr.State{"longAsHex": newValue})
+				}),
+			),
+			gr.Text(fmt.Sprintf("=> %d", decodedLongValue)),
 		),
 	)
 
@@ -75,5 +108,6 @@ func (c rawValue) Render() gr.Component {
 
 // Implements the ShouldComponentUpdate interface.
 func (c rawValue) ShouldComponentUpdate(next gr.Cops) bool {
-	return c.State().HasChanged(next.State, "longValue")
+	return c.State().HasChanged(next.State, "longValue") ||
+		c.State().HasChanged(next.State, "longAsHex")
 }
