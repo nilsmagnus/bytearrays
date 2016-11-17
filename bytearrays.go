@@ -40,7 +40,7 @@ func decodeLongFromHex(hex string) uint64 {
 	return res
 }
 
-func encodeFromLong(longValue uint64) string {
+func encodeFromLong(longValue int64) string {
 	var prettyLongBytes = ""
 
 	var long2Hex = fmt.Sprintf("%016X", longValue)
@@ -57,7 +57,8 @@ func encodeFromLong(longValue uint64) string {
 
 // Implements the Renderer interface.
 func (c rawValue) Render() gr.Component {
-	longValue, err := strconv.ParseUint(c.State().String("longValue"), 10, 64)
+	fmt.Println("hahadsf")
+	longValue, err := strconv.ParseInt(c.State().String("longValue"), 10, 64)
 	longAsHex := c.State().String("longAsHex")
 
 	if err != nil {

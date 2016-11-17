@@ -109,6 +109,13 @@ var $subslice = function(slice, low, high, max) {
   return s;
 };
 
+var $substring = function(str, low, high) {
+  if (low < 0 || high < low || high > str.length) {
+    $throwRuntimeError("slice bounds out of range");
+  }
+  return str.substring(low, high);
+};
+
 var $sliceToArray = function(slice) {
   if (slice.$length === 0) {
     return [];
@@ -3350,7 +3357,7 @@ $packages["syscall"] = (function() {
 			while (true) {
 				if (!(j < s.length)) { break; }
 				if (s.charCodeAt(j) === 61) {
-					key = s.substring(0, j);
+					key = $substring(s, 0, j);
 					_tuple = (_entry = env[$String.keyFor(key)], _entry !== undefined ? [_entry.v, true] : [0, false]);
 					ok = _tuple[1];
 					if (!ok) {
@@ -3397,7 +3404,7 @@ $packages["syscall"] = (function() {
 		while (true) {
 			if (!(i$1 < s.length)) { break; }
 			if (s.charCodeAt(i$1) === 61) {
-				_tmp$4 = s.substring((i$1 + 1 >> 0));
+				_tmp$4 = $substring(s, (i$1 + 1 >> 0));
 				_tmp$5 = true;
 				value = _tmp$4;
 				found = _tmp$5;
@@ -4130,7 +4137,7 @@ $packages["time"] = (function() {
 			localLoc.name = "UTC";
 			return;
 		}
-		localLoc.name = s.substring((i + 1 >> 0), j);
+		localLoc.name = $substring(s, (i + 1 >> 0), j);
 		localLoc.zone = new sliceType([new zone.ptr(localLoc.name, $imul(($parseInt(d.getTimezoneOffset()) >> 0), -60), false)]);
 	};
 	runtimeNano = function() {
@@ -4198,20 +4205,20 @@ $packages["time"] = (function() {
 			c = (layout.charCodeAt(i) >> 0);
 			_1 = c;
 			if (_1 === (74)) {
-				if (layout.length >= (i + 3 >> 0) && layout.substring(i, (i + 3 >> 0)) === "Jan") {
-					if (layout.length >= (i + 7 >> 0) && layout.substring(i, (i + 7 >> 0)) === "January") {
-						_tmp = layout.substring(0, i);
+				if (layout.length >= (i + 3 >> 0) && $substring(layout, i, (i + 3 >> 0)) === "Jan") {
+					if (layout.length >= (i + 7 >> 0) && $substring(layout, i, (i + 7 >> 0)) === "January") {
+						_tmp = $substring(layout, 0, i);
 						_tmp$1 = 257;
-						_tmp$2 = layout.substring((i + 7 >> 0));
+						_tmp$2 = $substring(layout, (i + 7 >> 0));
 						prefix = _tmp;
 						std = _tmp$1;
 						suffix = _tmp$2;
 						return [prefix, std, suffix];
 					}
-					if (!startsWithLowerCase(layout.substring((i + 3 >> 0)))) {
-						_tmp$3 = layout.substring(0, i);
+					if (!startsWithLowerCase($substring(layout, (i + 3 >> 0)))) {
+						_tmp$3 = $substring(layout, 0, i);
 						_tmp$4 = 258;
-						_tmp$5 = layout.substring((i + 3 >> 0));
+						_tmp$5 = $substring(layout, (i + 3 >> 0));
 						prefix = _tmp$3;
 						std = _tmp$4;
 						suffix = _tmp$5;
@@ -4220,30 +4227,30 @@ $packages["time"] = (function() {
 				}
 			} else if (_1 === (77)) {
 				if (layout.length >= (i + 3 >> 0)) {
-					if (layout.substring(i, (i + 3 >> 0)) === "Mon") {
-						if (layout.length >= (i + 6 >> 0) && layout.substring(i, (i + 6 >> 0)) === "Monday") {
-							_tmp$6 = layout.substring(0, i);
+					if ($substring(layout, i, (i + 3 >> 0)) === "Mon") {
+						if (layout.length >= (i + 6 >> 0) && $substring(layout, i, (i + 6 >> 0)) === "Monday") {
+							_tmp$6 = $substring(layout, 0, i);
 							_tmp$7 = 261;
-							_tmp$8 = layout.substring((i + 6 >> 0));
+							_tmp$8 = $substring(layout, (i + 6 >> 0));
 							prefix = _tmp$6;
 							std = _tmp$7;
 							suffix = _tmp$8;
 							return [prefix, std, suffix];
 						}
-						if (!startsWithLowerCase(layout.substring((i + 3 >> 0)))) {
-							_tmp$9 = layout.substring(0, i);
+						if (!startsWithLowerCase($substring(layout, (i + 3 >> 0)))) {
+							_tmp$9 = $substring(layout, 0, i);
 							_tmp$10 = 262;
-							_tmp$11 = layout.substring((i + 3 >> 0));
+							_tmp$11 = $substring(layout, (i + 3 >> 0));
 							prefix = _tmp$9;
 							std = _tmp$10;
 							suffix = _tmp$11;
 							return [prefix, std, suffix];
 						}
 					}
-					if (layout.substring(i, (i + 3 >> 0)) === "MST") {
-						_tmp$12 = layout.substring(0, i);
+					if ($substring(layout, i, (i + 3 >> 0)) === "MST") {
+						_tmp$12 = $substring(layout, 0, i);
 						_tmp$13 = 21;
-						_tmp$14 = layout.substring((i + 3 >> 0));
+						_tmp$14 = $substring(layout, (i + 3 >> 0));
 						prefix = _tmp$12;
 						std = _tmp$13;
 						suffix = _tmp$14;
@@ -4252,9 +4259,9 @@ $packages["time"] = (function() {
 				}
 			} else if (_1 === (48)) {
 				if (layout.length >= (i + 2 >> 0) && 49 <= layout.charCodeAt((i + 1 >> 0)) && layout.charCodeAt((i + 1 >> 0)) <= 54) {
-					_tmp$15 = layout.substring(0, i);
+					_tmp$15 = $substring(layout, 0, i);
 					_tmp$16 = (x = layout.charCodeAt((i + 1 >> 0)) - 49 << 24 >>> 24, ((x < 0 || x >= std0x.length) ? $throwRuntimeError("index out of range") : std0x[x]));
-					_tmp$17 = layout.substring((i + 2 >> 0));
+					_tmp$17 = $substring(layout, (i + 2 >> 0));
 					prefix = _tmp$15;
 					std = _tmp$16;
 					suffix = _tmp$17;
@@ -4262,86 +4269,86 @@ $packages["time"] = (function() {
 				}
 			} else if (_1 === (49)) {
 				if (layout.length >= (i + 2 >> 0) && (layout.charCodeAt((i + 1 >> 0)) === 53)) {
-					_tmp$18 = layout.substring(0, i);
+					_tmp$18 = $substring(layout, 0, i);
 					_tmp$19 = 522;
-					_tmp$20 = layout.substring((i + 2 >> 0));
+					_tmp$20 = $substring(layout, (i + 2 >> 0));
 					prefix = _tmp$18;
 					std = _tmp$19;
 					suffix = _tmp$20;
 					return [prefix, std, suffix];
 				}
-				_tmp$21 = layout.substring(0, i);
+				_tmp$21 = $substring(layout, 0, i);
 				_tmp$22 = 259;
-				_tmp$23 = layout.substring((i + 1 >> 0));
+				_tmp$23 = $substring(layout, (i + 1 >> 0));
 				prefix = _tmp$21;
 				std = _tmp$22;
 				suffix = _tmp$23;
 				return [prefix, std, suffix];
 			} else if (_1 === (50)) {
-				if (layout.length >= (i + 4 >> 0) && layout.substring(i, (i + 4 >> 0)) === "2006") {
-					_tmp$24 = layout.substring(0, i);
+				if (layout.length >= (i + 4 >> 0) && $substring(layout, i, (i + 4 >> 0)) === "2006") {
+					_tmp$24 = $substring(layout, 0, i);
 					_tmp$25 = 273;
-					_tmp$26 = layout.substring((i + 4 >> 0));
+					_tmp$26 = $substring(layout, (i + 4 >> 0));
 					prefix = _tmp$24;
 					std = _tmp$25;
 					suffix = _tmp$26;
 					return [prefix, std, suffix];
 				}
-				_tmp$27 = layout.substring(0, i);
+				_tmp$27 = $substring(layout, 0, i);
 				_tmp$28 = 263;
-				_tmp$29 = layout.substring((i + 1 >> 0));
+				_tmp$29 = $substring(layout, (i + 1 >> 0));
 				prefix = _tmp$27;
 				std = _tmp$28;
 				suffix = _tmp$29;
 				return [prefix, std, suffix];
 			} else if (_1 === (95)) {
 				if (layout.length >= (i + 2 >> 0) && (layout.charCodeAt((i + 1 >> 0)) === 50)) {
-					if (layout.length >= (i + 5 >> 0) && layout.substring((i + 1 >> 0), (i + 5 >> 0)) === "2006") {
-						_tmp$30 = layout.substring(0, (i + 1 >> 0));
+					if (layout.length >= (i + 5 >> 0) && $substring(layout, (i + 1 >> 0), (i + 5 >> 0)) === "2006") {
+						_tmp$30 = $substring(layout, 0, (i + 1 >> 0));
 						_tmp$31 = 273;
-						_tmp$32 = layout.substring((i + 5 >> 0));
+						_tmp$32 = $substring(layout, (i + 5 >> 0));
 						prefix = _tmp$30;
 						std = _tmp$31;
 						suffix = _tmp$32;
 						return [prefix, std, suffix];
 					}
-					_tmp$33 = layout.substring(0, i);
+					_tmp$33 = $substring(layout, 0, i);
 					_tmp$34 = 264;
-					_tmp$35 = layout.substring((i + 2 >> 0));
+					_tmp$35 = $substring(layout, (i + 2 >> 0));
 					prefix = _tmp$33;
 					std = _tmp$34;
 					suffix = _tmp$35;
 					return [prefix, std, suffix];
 				}
 			} else if (_1 === (51)) {
-				_tmp$36 = layout.substring(0, i);
+				_tmp$36 = $substring(layout, 0, i);
 				_tmp$37 = 523;
-				_tmp$38 = layout.substring((i + 1 >> 0));
+				_tmp$38 = $substring(layout, (i + 1 >> 0));
 				prefix = _tmp$36;
 				std = _tmp$37;
 				suffix = _tmp$38;
 				return [prefix, std, suffix];
 			} else if (_1 === (52)) {
-				_tmp$39 = layout.substring(0, i);
+				_tmp$39 = $substring(layout, 0, i);
 				_tmp$40 = 525;
-				_tmp$41 = layout.substring((i + 1 >> 0));
+				_tmp$41 = $substring(layout, (i + 1 >> 0));
 				prefix = _tmp$39;
 				std = _tmp$40;
 				suffix = _tmp$41;
 				return [prefix, std, suffix];
 			} else if (_1 === (53)) {
-				_tmp$42 = layout.substring(0, i);
+				_tmp$42 = $substring(layout, 0, i);
 				_tmp$43 = 527;
-				_tmp$44 = layout.substring((i + 1 >> 0));
+				_tmp$44 = $substring(layout, (i + 1 >> 0));
 				prefix = _tmp$42;
 				std = _tmp$43;
 				suffix = _tmp$44;
 				return [prefix, std, suffix];
 			} else if (_1 === (80)) {
 				if (layout.length >= (i + 2 >> 0) && (layout.charCodeAt((i + 1 >> 0)) === 77)) {
-					_tmp$45 = layout.substring(0, i);
+					_tmp$45 = $substring(layout, 0, i);
 					_tmp$46 = 531;
-					_tmp$47 = layout.substring((i + 2 >> 0));
+					_tmp$47 = $substring(layout, (i + 2 >> 0));
 					prefix = _tmp$45;
 					std = _tmp$46;
 					suffix = _tmp$47;
@@ -4349,101 +4356,101 @@ $packages["time"] = (function() {
 				}
 			} else if (_1 === (112)) {
 				if (layout.length >= (i + 2 >> 0) && (layout.charCodeAt((i + 1 >> 0)) === 109)) {
-					_tmp$48 = layout.substring(0, i);
+					_tmp$48 = $substring(layout, 0, i);
 					_tmp$49 = 532;
-					_tmp$50 = layout.substring((i + 2 >> 0));
+					_tmp$50 = $substring(layout, (i + 2 >> 0));
 					prefix = _tmp$48;
 					std = _tmp$49;
 					suffix = _tmp$50;
 					return [prefix, std, suffix];
 				}
 			} else if (_1 === (45)) {
-				if (layout.length >= (i + 7 >> 0) && layout.substring(i, (i + 7 >> 0)) === "-070000") {
-					_tmp$51 = layout.substring(0, i);
+				if (layout.length >= (i + 7 >> 0) && $substring(layout, i, (i + 7 >> 0)) === "-070000") {
+					_tmp$51 = $substring(layout, 0, i);
 					_tmp$52 = 28;
-					_tmp$53 = layout.substring((i + 7 >> 0));
+					_tmp$53 = $substring(layout, (i + 7 >> 0));
 					prefix = _tmp$51;
 					std = _tmp$52;
 					suffix = _tmp$53;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 9 >> 0) && layout.substring(i, (i + 9 >> 0)) === "-07:00:00") {
-					_tmp$54 = layout.substring(0, i);
+				if (layout.length >= (i + 9 >> 0) && $substring(layout, i, (i + 9 >> 0)) === "-07:00:00") {
+					_tmp$54 = $substring(layout, 0, i);
 					_tmp$55 = 31;
-					_tmp$56 = layout.substring((i + 9 >> 0));
+					_tmp$56 = $substring(layout, (i + 9 >> 0));
 					prefix = _tmp$54;
 					std = _tmp$55;
 					suffix = _tmp$56;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 5 >> 0) && layout.substring(i, (i + 5 >> 0)) === "-0700") {
-					_tmp$57 = layout.substring(0, i);
+				if (layout.length >= (i + 5 >> 0) && $substring(layout, i, (i + 5 >> 0)) === "-0700") {
+					_tmp$57 = $substring(layout, 0, i);
 					_tmp$58 = 27;
-					_tmp$59 = layout.substring((i + 5 >> 0));
+					_tmp$59 = $substring(layout, (i + 5 >> 0));
 					prefix = _tmp$57;
 					std = _tmp$58;
 					suffix = _tmp$59;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 6 >> 0) && layout.substring(i, (i + 6 >> 0)) === "-07:00") {
-					_tmp$60 = layout.substring(0, i);
+				if (layout.length >= (i + 6 >> 0) && $substring(layout, i, (i + 6 >> 0)) === "-07:00") {
+					_tmp$60 = $substring(layout, 0, i);
 					_tmp$61 = 30;
-					_tmp$62 = layout.substring((i + 6 >> 0));
+					_tmp$62 = $substring(layout, (i + 6 >> 0));
 					prefix = _tmp$60;
 					std = _tmp$61;
 					suffix = _tmp$62;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 3 >> 0) && layout.substring(i, (i + 3 >> 0)) === "-07") {
-					_tmp$63 = layout.substring(0, i);
+				if (layout.length >= (i + 3 >> 0) && $substring(layout, i, (i + 3 >> 0)) === "-07") {
+					_tmp$63 = $substring(layout, 0, i);
 					_tmp$64 = 29;
-					_tmp$65 = layout.substring((i + 3 >> 0));
+					_tmp$65 = $substring(layout, (i + 3 >> 0));
 					prefix = _tmp$63;
 					std = _tmp$64;
 					suffix = _tmp$65;
 					return [prefix, std, suffix];
 				}
 			} else if (_1 === (90)) {
-				if (layout.length >= (i + 7 >> 0) && layout.substring(i, (i + 7 >> 0)) === "Z070000") {
-					_tmp$66 = layout.substring(0, i);
+				if (layout.length >= (i + 7 >> 0) && $substring(layout, i, (i + 7 >> 0)) === "Z070000") {
+					_tmp$66 = $substring(layout, 0, i);
 					_tmp$67 = 23;
-					_tmp$68 = layout.substring((i + 7 >> 0));
+					_tmp$68 = $substring(layout, (i + 7 >> 0));
 					prefix = _tmp$66;
 					std = _tmp$67;
 					suffix = _tmp$68;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 9 >> 0) && layout.substring(i, (i + 9 >> 0)) === "Z07:00:00") {
-					_tmp$69 = layout.substring(0, i);
+				if (layout.length >= (i + 9 >> 0) && $substring(layout, i, (i + 9 >> 0)) === "Z07:00:00") {
+					_tmp$69 = $substring(layout, 0, i);
 					_tmp$70 = 26;
-					_tmp$71 = layout.substring((i + 9 >> 0));
+					_tmp$71 = $substring(layout, (i + 9 >> 0));
 					prefix = _tmp$69;
 					std = _tmp$70;
 					suffix = _tmp$71;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 5 >> 0) && layout.substring(i, (i + 5 >> 0)) === "Z0700") {
-					_tmp$72 = layout.substring(0, i);
+				if (layout.length >= (i + 5 >> 0) && $substring(layout, i, (i + 5 >> 0)) === "Z0700") {
+					_tmp$72 = $substring(layout, 0, i);
 					_tmp$73 = 22;
-					_tmp$74 = layout.substring((i + 5 >> 0));
+					_tmp$74 = $substring(layout, (i + 5 >> 0));
 					prefix = _tmp$72;
 					std = _tmp$73;
 					suffix = _tmp$74;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 6 >> 0) && layout.substring(i, (i + 6 >> 0)) === "Z07:00") {
-					_tmp$75 = layout.substring(0, i);
+				if (layout.length >= (i + 6 >> 0) && $substring(layout, i, (i + 6 >> 0)) === "Z07:00") {
+					_tmp$75 = $substring(layout, 0, i);
 					_tmp$76 = 25;
-					_tmp$77 = layout.substring((i + 6 >> 0));
+					_tmp$77 = $substring(layout, (i + 6 >> 0));
 					prefix = _tmp$75;
 					std = _tmp$76;
 					suffix = _tmp$77;
 					return [prefix, std, suffix];
 				}
-				if (layout.length >= (i + 3 >> 0) && layout.substring(i, (i + 3 >> 0)) === "Z07") {
-					_tmp$78 = layout.substring(0, i);
+				if (layout.length >= (i + 3 >> 0) && $substring(layout, i, (i + 3 >> 0)) === "Z07") {
+					_tmp$78 = $substring(layout, 0, i);
 					_tmp$79 = 24;
-					_tmp$80 = layout.substring((i + 3 >> 0));
+					_tmp$80 = $substring(layout, (i + 3 >> 0));
 					prefix = _tmp$78;
 					std = _tmp$79;
 					suffix = _tmp$80;
@@ -4463,9 +4470,9 @@ $packages["time"] = (function() {
 							std$1 = 33;
 						}
 						std$1 = std$1 | ((((j - ((i + 1 >> 0)) >> 0)) << 16 >> 0));
-						_tmp$81 = layout.substring(0, i);
+						_tmp$81 = $substring(layout, 0, i);
 						_tmp$82 = std$1;
-						_tmp$83 = layout.substring(j);
+						_tmp$83 = $substring(layout, j);
 						prefix = _tmp$81;
 						std = _tmp$82;
 						suffix = _tmp$83;
@@ -4509,8 +4516,8 @@ $packages["time"] = (function() {
 			if (!(_i < _ref.$length)) { break; }
 			i = _i;
 			v = ((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]);
-			if (val.length >= v.length && match(val.substring(0, v.length), v)) {
-				return [i, val.substring(v.length), $ifaceNil];
+			if (val.length >= v.length && match($substring(val, 0, v.length), v)) {
+				return [i, $substring(val, v.length), $ifaceNil];
 			}
 			_i++;
 		}
@@ -4549,7 +4556,7 @@ $packages["time"] = (function() {
 		neg = false;
 		if (!(s === "") && ((s.charCodeAt(0) === 45) || (s.charCodeAt(0) === 43))) {
 			neg = s.charCodeAt(0) === 45;
-			s = s.substring(1);
+			s = $substring(s, 1);
 		}
 		_tuple$1 = leadingInt(s);
 		q = _tuple$1[0];
@@ -4678,7 +4685,7 @@ $packages["time"] = (function() {
 				} else if (_1 === (273)) {
 					b = appendInt(b, year, 4);
 				} else if (_1 === (258)) {
-					b = $appendSlice(b, new Month(month).String().substring(0, 3));
+					b = $appendSlice(b, $substring(new Month(month).String(), 0, 3));
 				} else if (_1 === (257)) {
 					m = new Month(month).String();
 					b = $appendSlice(b, m);
@@ -4687,7 +4694,7 @@ $packages["time"] = (function() {
 				} else if (_1 === (260)) {
 					b = appendInt(b, (month >> 0), 2);
 				} else if (_1 === (262)) {
-					b = $appendSlice(b, new Weekday(absWeekday(abs)).String().substring(0, 3));
+					b = $appendSlice(b, $substring(new Weekday(absWeekday(abs)).String(), 0, 3));
 				} else if (_1 === (261)) {
 					s = new Weekday(absWeekday(abs)).String();
 					b = $appendSlice(b, s);
@@ -4815,15 +4822,15 @@ $packages["time"] = (function() {
 			if (fixed) {
 				return [0, s, errBad];
 			}
-			return [((s.charCodeAt(0) - 48 << 24 >>> 24) >> 0), s.substring(1), $ifaceNil];
+			return [((s.charCodeAt(0) - 48 << 24 >>> 24) >> 0), $substring(s, 1), $ifaceNil];
 		}
-		return [($imul(((s.charCodeAt(0) - 48 << 24 >>> 24) >> 0), 10)) + ((s.charCodeAt(1) - 48 << 24 >>> 24) >> 0) >> 0, s.substring(2), $ifaceNil];
+		return [($imul(((s.charCodeAt(0) - 48 << 24 >>> 24) >> 0), 10)) + ((s.charCodeAt(1) - 48 << 24 >>> 24) >> 0) >> 0, $substring(s, 2), $ifaceNil];
 	};
 	cutspace = function(s) {
 		var $ptr, s;
 		while (true) {
 			if (!(s.length > 0 && (s.charCodeAt(0) === 32))) { break; }
-			s = s.substring(1);
+			s = $substring(s, 1);
 		}
 		return s;
 	};
@@ -4842,8 +4849,8 @@ $packages["time"] = (function() {
 			if ((value.length === 0) || !((value.charCodeAt(0) === prefix.charCodeAt(0)))) {
 				return [value, errBad];
 			}
-			prefix = prefix.substring(1);
-			value = value.substring(1);
+			prefix = $substring(prefix, 1);
+			value = $substring(value, 1);
 		}
 		return [value, $ifaceNil];
 	};
@@ -4882,7 +4889,7 @@ $packages["time"] = (function() {
 			prefix = _tuple$1[0];
 			std = _tuple$1[1];
 			suffix = _tuple$1[2];
-			stdstr = layout.substring(prefix.length, (layout.length - suffix.length >> 0));
+			stdstr = $substring(layout, prefix.length, (layout.length - suffix.length >> 0));
 			_tuple$2 = skip(value, prefix);
 			value = _tuple$2[0];
 			err = _tuple$2[1];
@@ -4906,8 +4913,8 @@ $packages["time"] = (function() {
 						err = errBad;
 						break;
 					}
-					_tmp$2 = value.substring(0, 2);
-					_tmp$3 = value.substring(2);
+					_tmp$2 = $substring(value, 0, 2);
+					_tmp$3 = $substring(value, 2);
 					p = _tmp$2;
 					value = _tmp$3;
 					_tuple$3 = atoi(p);
@@ -4923,8 +4930,8 @@ $packages["time"] = (function() {
 						err = errBad;
 						break;
 					}
-					_tmp$4 = value.substring(0, 4);
-					_tmp$5 = value.substring(4);
+					_tmp$4 = $substring(value, 0, 4);
+					_tmp$5 = $substring(value, 4);
 					p = _tmp$4;
 					value = _tmp$5;
 					_tuple$4 = atoi(p);
@@ -4958,7 +4965,7 @@ $packages["time"] = (function() {
 					err = _tuple$9[2];
 				} else if ((_1 === (263)) || (_1 === (264)) || (_1 === (265))) {
 					if ((std === 264) && value.length > 0 && (value.charCodeAt(0) === 32)) {
-						value = value.substring(1);
+						value = $substring(value, 1);
 					}
 					_tuple$10 = getnum(value, std === 265);
 					day = _tuple$10[0];
@@ -5015,15 +5022,15 @@ $packages["time"] = (function() {
 						nsec = _tuple$16[0];
 						rangeErrString = _tuple$16[1];
 						err = _tuple$16[2];
-						value = value.substring(n);
+						value = $substring(value, n);
 					}
 				} else if (_1 === (531)) {
 					if (value.length < 2) {
 						err = errBad;
 						break;
 					}
-					_tmp$6 = value.substring(0, 2);
-					_tmp$7 = value.substring(2);
+					_tmp$6 = $substring(value, 0, 2);
+					_tmp$7 = $substring(value, 2);
 					p = _tmp$6;
 					value = _tmp$7;
 					_2 = p;
@@ -5039,8 +5046,8 @@ $packages["time"] = (function() {
 						err = errBad;
 						break;
 					}
-					_tmp$8 = value.substring(0, 2);
-					_tmp$9 = value.substring(2);
+					_tmp$8 = $substring(value, 0, 2);
+					_tmp$9 = $substring(value, 2);
 					p = _tmp$8;
 					value = _tmp$9;
 					_3 = p;
@@ -5053,7 +5060,7 @@ $packages["time"] = (function() {
 					}
 				} else if ((_1 === (22)) || (_1 === (25)) || (_1 === (23)) || (_1 === (24)) || (_1 === (26)) || (_1 === (27)) || (_1 === (29)) || (_1 === (30)) || (_1 === (28)) || (_1 === (31))) {
 					if (((std === 22) || (std === 24) || (std === 25)) && value.length >= 1 && (value.charCodeAt(0) === 90)) {
-						value = value.substring(1);
+						value = $substring(value, 1);
 						z = $pkg.UTC;
 						break;
 					}
@@ -5074,11 +5081,11 @@ $packages["time"] = (function() {
 							err = errBad;
 							break;
 						}
-						_tmp$14 = value.substring(0, 1);
-						_tmp$15 = value.substring(1, 3);
-						_tmp$16 = value.substring(4, 6);
+						_tmp$14 = $substring(value, 0, 1);
+						_tmp$15 = $substring(value, 1, 3);
+						_tmp$16 = $substring(value, 4, 6);
 						_tmp$17 = "00";
-						_tmp$18 = value.substring(6);
+						_tmp$18 = $substring(value, 6);
 						sign = _tmp$14;
 						hour$1 = _tmp$15;
 						min$1 = _tmp$16;
@@ -5089,11 +5096,11 @@ $packages["time"] = (function() {
 							err = errBad;
 							break;
 						}
-						_tmp$19 = value.substring(0, 1);
-						_tmp$20 = value.substring(1, 3);
+						_tmp$19 = $substring(value, 0, 1);
+						_tmp$20 = $substring(value, 1, 3);
 						_tmp$21 = "00";
 						_tmp$22 = "00";
-						_tmp$23 = value.substring(3);
+						_tmp$23 = $substring(value, 3);
 						sign = _tmp$19;
 						hour$1 = _tmp$20;
 						min$1 = _tmp$21;
@@ -5108,11 +5115,11 @@ $packages["time"] = (function() {
 							err = errBad;
 							break;
 						}
-						_tmp$24 = value.substring(0, 1);
-						_tmp$25 = value.substring(1, 3);
-						_tmp$26 = value.substring(4, 6);
-						_tmp$27 = value.substring(7, 9);
-						_tmp$28 = value.substring(9);
+						_tmp$24 = $substring(value, 0, 1);
+						_tmp$25 = $substring(value, 1, 3);
+						_tmp$26 = $substring(value, 4, 6);
+						_tmp$27 = $substring(value, 7, 9);
+						_tmp$28 = $substring(value, 9);
 						sign = _tmp$24;
 						hour$1 = _tmp$25;
 						min$1 = _tmp$26;
@@ -5123,11 +5130,11 @@ $packages["time"] = (function() {
 							err = errBad;
 							break;
 						}
-						_tmp$29 = value.substring(0, 1);
-						_tmp$30 = value.substring(1, 3);
-						_tmp$31 = value.substring(3, 5);
-						_tmp$32 = value.substring(5, 7);
-						_tmp$33 = value.substring(7);
+						_tmp$29 = $substring(value, 0, 1);
+						_tmp$30 = $substring(value, 1, 3);
+						_tmp$31 = $substring(value, 3, 5);
+						_tmp$32 = $substring(value, 5, 7);
+						_tmp$33 = $substring(value, 7);
 						sign = _tmp$29;
 						hour$1 = _tmp$30;
 						min$1 = _tmp$31;
@@ -5138,11 +5145,11 @@ $packages["time"] = (function() {
 							err = errBad;
 							break;
 						}
-						_tmp$34 = value.substring(0, 1);
-						_tmp$35 = value.substring(1, 3);
-						_tmp$36 = value.substring(3, 5);
+						_tmp$34 = $substring(value, 0, 1);
+						_tmp$35 = $substring(value, 1, 3);
+						_tmp$36 = $substring(value, 3, 5);
 						_tmp$37 = "00";
-						_tmp$38 = value.substring(5);
+						_tmp$38 = $substring(value, 5);
 						sign = _tmp$34;
 						hour$1 = _tmp$35;
 						min$1 = _tmp$36;
@@ -5177,9 +5184,9 @@ $packages["time"] = (function() {
 						err = errBad;
 					}
 				} else if (_1 === (21)) {
-					if (value.length >= 3 && value.substring(0, 3) === "UTC") {
+					if (value.length >= 3 && $substring(value, 0, 3) === "UTC") {
 						z = $pkg.UTC;
-						value = value.substring(3);
+						value = $substring(value, 3);
 						break;
 					}
 					_tuple$20 = parseTimeZone(value);
@@ -5189,8 +5196,8 @@ $packages["time"] = (function() {
 						err = errBad;
 						break;
 					}
-					_tmp$42 = value.substring(0, n$1);
-					_tmp$43 = value.substring(n$1);
+					_tmp$42 = $substring(value, 0, n$1);
+					_tmp$43 = $substring(value, n$1);
 					zoneName = _tmp$42;
 					value = _tmp$43;
 				} else if (_1 === (32)) {
@@ -5203,7 +5210,7 @@ $packages["time"] = (function() {
 					nsec = _tuple$21[0];
 					rangeErrString = _tuple$21[1];
 					err = _tuple$21[2];
-					value = value.substring(ndigit);
+					value = $substring(value, ndigit);
 				} else if (_1 === (33)) {
 					if (value.length < 2 || !((value.charCodeAt(0) === 46)) || value.charCodeAt(1) < 48 || 57 < value.charCodeAt(1)) {
 						break;
@@ -5217,7 +5224,7 @@ $packages["time"] = (function() {
 					nsec = _tuple$22[0];
 					rangeErrString = _tuple$22[1];
 					err = _tuple$22[2];
-					value = value.substring((1 + i >> 0));
+					value = $substring(value, (1 + i >> 0));
 				}
 			}
 			if (!(rangeErrString === "")) {
@@ -5279,8 +5286,8 @@ $packages["time"] = (function() {
 				$s = -1; return [t$1, $ifaceNil];
 				return [t$1, $ifaceNil];
 			}
-			if (zoneName.length > 3 && zoneName.substring(0, 3) === "GMT") {
-				_tuple$25 = atoi(zoneName.substring(3));
+			if (zoneName.length > 3 && $substring(zoneName, 0, 3) === "GMT") {
+				_tuple$25 = atoi($substring(zoneName, 3));
 				offset$1 = _tuple$25[0];
 				offset$1 = $imul(offset$1, (3600));
 			}
@@ -5304,14 +5311,14 @@ $packages["time"] = (function() {
 			ok = _tmp$1;
 			return [length, ok];
 		}
-		if (value.length >= 4 && (value.substring(0, 4) === "ChST" || value.substring(0, 4) === "MeST")) {
+		if (value.length >= 4 && ($substring(value, 0, 4) === "ChST" || $substring(value, 0, 4) === "MeST")) {
 			_tmp$2 = 4;
 			_tmp$3 = true;
 			length = _tmp$2;
 			ok = _tmp$3;
 			return [length, ok];
 		}
-		if (value.substring(0, 3) === "GMT") {
+		if ($substring(value, 0, 3) === "GMT") {
 			length = parseGMT(value);
 			_tmp$4 = length;
 			_tmp$5 = true;
@@ -5370,7 +5377,7 @@ $packages["time"] = (function() {
 	};
 	parseGMT = function(value) {
 		var $ptr, _tuple$1, err, rem, sign, value, x;
-		value = value.substring(3);
+		value = $substring(value, 3);
 		if (value.length === 0) {
 			return 3;
 		}
@@ -5378,7 +5385,7 @@ $packages["time"] = (function() {
 		if (!((sign === 45)) && !((sign === 43))) {
 			return 3;
 		}
-		_tuple$1 = leadingInt(value.substring(1));
+		_tuple$1 = leadingInt($substring(value, 1));
 		x = _tuple$1[0];
 		rem = _tuple$1[1];
 		err = _tuple$1[2];
@@ -5402,7 +5409,7 @@ $packages["time"] = (function() {
 			err = errBad;
 			return [ns, rangeErrString, err];
 		}
-		_tuple$1 = atoi(value.substring(1, nbytes));
+		_tuple$1 = atoi($substring(value, 1, nbytes));
 		ns = _tuple$1[0];
 		err = _tuple$1[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
@@ -5455,7 +5462,7 @@ $packages["time"] = (function() {
 			i = i + (1) >> 0;
 		}
 		_tmp$6 = x;
-		_tmp$7 = s.substring(i);
+		_tmp$7 = $substring(s, i);
 		_tmp$8 = $ifaceNil;
 		x = _tmp$6;
 		rem = _tmp$7;
@@ -7546,14 +7553,14 @@ $packages["os"] = (function() {
 		i = name.length - 1 >> 0;
 		while (true) {
 			if (!(i > 0 && (name.charCodeAt(i) === 47))) { break; }
-			name = name.substring(0, i);
+			name = $substring(name, 0, i);
 			i = i - (1) >> 0;
 		}
 		i = i - (1) >> 0;
 		while (true) {
 			if (!(i >= 0)) { break; }
 			if (name.charCodeAt(i) === 47) {
-				name = name.substring((i + 1 >> 0));
+				name = $substring(name, (i + 1 >> 0));
 				break;
 			}
 			i = i - (1) >> 0;
@@ -7994,7 +8001,7 @@ $packages["unicode/utf8"] = (function() {
 	return $pkg;
 })();
 $packages["strconv"] = (function() {
-	var $pkg = {}, $init, errors, math, utf8, NumError, decimal, leftCheat, extFloat, floatInfo, decimalSlice, sliceType$3, sliceType$4, sliceType$5, arrayType, ptrType, sliceType$6, arrayType$1, arrayType$2, ptrType$1, arrayType$3, arrayType$4, ptrType$2, ptrType$3, ptrType$4, optimize, leftcheats, smallPowersOfTen, powersOfTen, uint64pow10, float32info, float32info$24ptr, float64info, float64info$24ptr, isPrint16, isNotPrint16, isPrint32, isNotPrint32, isGraphic, shifts, ParseUint, digitZero, trim, rightShift, prefixIsLessThan, leftShift, shouldRoundUp, frexp10Many, adjustLastDigitFixed, adjustLastDigit, AppendFloat, genericFtoa, bigFtoa, formatDigits, roundShortest, fmtE, fmtF, fmtB, min, max, FormatInt, Itoa, formatBits, quoteWith, appendQuotedWith, appendQuotedRuneWith, appendEscapedRune, Quote, AppendQuote, AppendQuoteToASCII, AppendQuoteRune, AppendQuoteRuneToASCII, CanBackquote, unhex, UnquoteChar, Unquote, contains, bsearch16, bsearch32, IsPrint, isInGraphicList;
+	var $pkg = {}, $init, errors, math, utf8, NumError, decimal, leftCheat, extFloat, floatInfo, decimalSlice, sliceType$3, sliceType$4, sliceType$5, arrayType, ptrType, sliceType$6, arrayType$1, arrayType$2, ptrType$1, arrayType$3, arrayType$4, ptrType$2, ptrType$3, ptrType$4, optimize, leftcheats, smallPowersOfTen, powersOfTen, uint64pow10, float32info, float32info$24ptr, float64info, float64info$24ptr, isPrint16, isNotPrint16, isPrint32, isNotPrint32, isGraphic, shifts, syntaxError, rangeError, ParseUint, ParseInt, digitZero, trim, rightShift, prefixIsLessThan, leftShift, shouldRoundUp, frexp10Many, adjustLastDigitFixed, adjustLastDigit, AppendFloat, genericFtoa, bigFtoa, formatDigits, roundShortest, fmtE, fmtF, fmtB, min, max, FormatInt, Itoa, formatBits, quoteWith, appendQuotedWith, appendQuotedRuneWith, appendEscapedRune, Quote, AppendQuote, AppendQuoteToASCII, AppendQuoteRune, AppendQuoteRuneToASCII, CanBackquote, unhex, UnquoteChar, Unquote, contains, bsearch16, bsearch32, IsPrint, isInGraphicList;
 	errors = $packages["errors"];
 	math = $packages["math"];
 	utf8 = $packages["unicode/utf8"];
@@ -8098,6 +8105,14 @@ $packages["strconv"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: NumError.ptr.prototype.Error }; } $f.$ptr = $ptr; $f._r = _r; $f.e = e; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	NumError.prototype.Error = function() { return this.$val.Error(); };
+	syntaxError = function(fn, str) {
+		var $ptr, fn, str;
+		return new NumError.ptr(fn, str, $pkg.ErrSyntax);
+	};
+	rangeError = function(fn, str) {
+		var $ptr, fn, str;
+		return new NumError.ptr(fn, str, $pkg.ErrRange);
+	};
 	ParseUint = function(s, base, bitSize) {
 		var $ptr, _1, _tmp, _tmp$1, base, bitSize, cutoff, d, err, i, maxVal, n, n1, s, v, x, x$1, x$2, $s;
 		/* */ $s = 0; s: while (true) { switch ($s) { case 0:
@@ -8217,6 +8232,67 @@ $packages["strconv"] = (function() {
 		/* */ } return; }
 	};
 	$pkg.ParseUint = ParseUint;
+	ParseInt = function(s, base, bitSize) {
+		var $ptr, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, _tmp$8, _tmp$9, _tuple, base, bitSize, cutoff, err, i, n, neg, s, s0, un, x, x$1;
+		i = new $Int64(0, 0);
+		err = $ifaceNil;
+		if (bitSize === 0) {
+			bitSize = 32;
+		}
+		if (s.length === 0) {
+			_tmp = new $Int64(0, 0);
+			_tmp$1 = syntaxError("ParseInt", s);
+			i = _tmp;
+			err = _tmp$1;
+			return [i, err];
+		}
+		s0 = s;
+		neg = false;
+		if (s.charCodeAt(0) === 43) {
+			s = $substring(s, 1);
+		} else if (s.charCodeAt(0) === 45) {
+			neg = true;
+			s = $substring(s, 1);
+		}
+		un = new $Uint64(0, 0);
+		_tuple = ParseUint(s, base, bitSize);
+		un = _tuple[0];
+		err = _tuple[1];
+		if (!($interfaceIsEqual(err, $ifaceNil)) && !($interfaceIsEqual($assertType(err, ptrType).Err, $pkg.ErrRange))) {
+			$assertType(err, ptrType).Func = "ParseInt";
+			$assertType(err, ptrType).Num = s0;
+			_tmp$2 = new $Int64(0, 0);
+			_tmp$3 = err;
+			i = _tmp$2;
+			err = _tmp$3;
+			return [i, err];
+		}
+		cutoff = $shiftLeft64(new $Uint64(0, 1), ((bitSize - 1 >> 0) >>> 0));
+		if (!neg && (un.$high > cutoff.$high || (un.$high === cutoff.$high && un.$low >= cutoff.$low))) {
+			_tmp$4 = (x = new $Uint64(cutoff.$high - 0, cutoff.$low - 1), new $Int64(x.$high, x.$low));
+			_tmp$5 = rangeError("ParseInt", s0);
+			i = _tmp$4;
+			err = _tmp$5;
+			return [i, err];
+		}
+		if (neg && (un.$high > cutoff.$high || (un.$high === cutoff.$high && un.$low > cutoff.$low))) {
+			_tmp$6 = (x$1 = new $Int64(cutoff.$high, cutoff.$low), new $Int64(-x$1.$high, -x$1.$low));
+			_tmp$7 = rangeError("ParseInt", s0);
+			i = _tmp$6;
+			err = _tmp$7;
+			return [i, err];
+		}
+		n = new $Int64(un.$high, un.$low);
+		if (neg) {
+			n = new $Int64(-n.$high, -n.$low);
+		}
+		_tmp$8 = n;
+		_tmp$9 = $ifaceNil;
+		i = _tmp$8;
+		err = _tmp$9;
+		return [i, err];
+	};
+	$pkg.ParseInt = ParseInt;
 	decimal.ptr.prototype.String = function() {
 		var $ptr, a, buf, n, w;
 		a = this;
@@ -9373,11 +9449,11 @@ $packages["strconv"] = (function() {
 				buf = $appendSlice(buf, "\\x");
 				buf = $append(buf, "0123456789abcdef".charCodeAt((s.charCodeAt(0) >>> 4 << 24 >>> 24)));
 				buf = $append(buf, "0123456789abcdef".charCodeAt(((s.charCodeAt(0) & 15) >>> 0)));
-				s = s.substring(width);
+				s = $substring(s, width);
 				continue;
 			}
 			buf = appendEscapedRune(buf, r, width, quote, ASCIIonly, graphicOnly);
-			s = s.substring(width);
+			s = $substring(s, width);
 		}
 		buf = $append(buf, quote);
 		return buf;
@@ -9491,7 +9567,7 @@ $packages["strconv"] = (function() {
 			_tuple = utf8.DecodeRuneInString(s);
 			r = _tuple[0];
 			wid = _tuple[1];
-			s = s.substring(wid);
+			s = $substring(s, wid);
 			if (wid > 1) {
 				if (r === 65279) {
 					return false;
@@ -9550,7 +9626,7 @@ $packages["strconv"] = (function() {
 			size = _tuple[1];
 			_tmp = r;
 			_tmp$1 = true;
-			_tmp$2 = s.substring(size);
+			_tmp$2 = $substring(s, size);
 			_tmp$3 = $ifaceNil;
 			value = _tmp;
 			multibyte = _tmp$1;
@@ -9560,7 +9636,7 @@ $packages["strconv"] = (function() {
 		} else if (!((c === 92))) {
 			_tmp$4 = (s.charCodeAt(0) >> 0);
 			_tmp$5 = false;
-			_tmp$6 = s.substring(1);
+			_tmp$6 = $substring(s, 1);
 			_tmp$7 = $ifaceNil;
 			value = _tmp$4;
 			multibyte = _tmp$5;
@@ -9573,7 +9649,7 @@ $packages["strconv"] = (function() {
 			return [value, multibyte, tail, err];
 		}
 		c$1 = s.charCodeAt(1);
-		s = s.substring(2);
+		s = $substring(s, 2);
 		switch (0) { default:
 			_1 = c$1;
 			if (_1 === (97)) {
@@ -9618,7 +9694,7 @@ $packages["strconv"] = (function() {
 					v = (v << 4 >> 0) | x;
 					j = j + (1) >> 0;
 				}
-				s = s.substring(n);
+				s = $substring(s, n);
 				if (c$1 === 120) {
 					value = v;
 					break;
@@ -9646,7 +9722,7 @@ $packages["strconv"] = (function() {
 					v$1 = ((v$1 << 3 >> 0)) | x$1;
 					j$1 = j$1 + (1) >> 0;
 				}
-				s = s.substring(2);
+				s = $substring(s, 2);
 				if (v$1 > 255) {
 					err = $pkg.ErrSyntax;
 					return [value, multibyte, tail, err];
@@ -9679,7 +9755,7 @@ $packages["strconv"] = (function() {
 		if (!((quote === s.charCodeAt((n - 1 >> 0))))) {
 			return ["", $pkg.ErrSyntax];
 		}
-		s = s.substring(1, (n - 1 >> 0));
+		s = $substring(s, 1, (n - 1 >> 0));
 		if (quote === 96) {
 			if (contains(s, 96)) {
 				return ["", $pkg.ErrSyntax];
@@ -11350,7 +11426,7 @@ $packages["reflect"] = (function() {
 				if (!(i < tag.length && (tag.charCodeAt(i) === 32))) { break; }
 				i = i + (1) >> 0;
 			}
-			tag = tag.substring(i);
+			tag = $substring(tag, i);
 			if (tag === "") {
 				break;
 			}
@@ -11362,8 +11438,8 @@ $packages["reflect"] = (function() {
 			if ((i + 1 >> 0) >= tag.length || !((tag.charCodeAt(i) === 58)) || !((tag.charCodeAt((i + 1 >> 0)) === 34))) {
 				break;
 			}
-			name$1 = tag.substring(0, i);
-			tag = tag.substring((i + 1 >> 0));
+			name$1 = $substring(tag, 0, i);
+			tag = $substring(tag, (i + 1 >> 0));
 			i = 1;
 			while (true) {
 				if (!(i < tag.length && !((tag.charCodeAt(i) === 34)))) { break; }
@@ -11375,8 +11451,8 @@ $packages["reflect"] = (function() {
 			if (i >= tag.length) {
 				break;
 			}
-			qvalue = tag.substring(0, (i + 1 >> 0));
-			tag = tag.substring((i + 1 >> 0));
+			qvalue = $substring(tag, 0, (i + 1 >> 0));
+			tag = $substring(tag, (i + 1 >> 0));
 			if (name$1 === "js") {
 				_tuple = strconv.Unquote(qvalue);
 				value = _tuple[0];
@@ -11685,7 +11761,7 @@ $packages["reflect"] = (function() {
 				if (i < 0 || j < i || j > str.length) {
 					$panic(new $String("reflect.Value.Slice: string slice index out of bounds"));
 				}
-				_r = ValueOf(new $String(str.substring(i, j))); /* */ $s = 7; case 7: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				_r = ValueOf(new $String($substring(str, i, j))); /* */ $s = 7; case 7: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 				$s = -1; return _r;
 				return _r;
 			/* } else { */ case 5:
@@ -11996,7 +12072,7 @@ $packages["reflect"] = (function() {
 		t = this;
 		s = t.nameOff(t.str).name();
 		if (!((((t.tflag & 2) >>> 0) === 0))) {
-			return s.substring(1);
+			return $substring(s, 1);
 		}
 		return s;
 	};
@@ -12202,7 +12278,7 @@ $packages["reflect"] = (function() {
 			}
 			i = i - (1) >> 0;
 		}
-		return s.substring((i + 1 >> 0));
+		return $substring(s, (i + 1 >> 0));
 	};
 	rtype.prototype.Name = function() { return this.$val.Name(); };
 	rtype.ptr.prototype.ChanDir = function() {
@@ -12462,7 +12538,7 @@ $packages["reflect"] = (function() {
 				if (!(i < tag.length && (tag.charCodeAt(i) === 32))) { break; }
 				i = i + (1) >> 0;
 			}
-			tag = tag.substring(i);
+			tag = $substring(tag, i);
 			if (tag === "") {
 				break;
 			}
@@ -12474,8 +12550,8 @@ $packages["reflect"] = (function() {
 			if ((i === 0) || (i + 1 >> 0) >= tag.length || !((tag.charCodeAt(i) === 58)) || !((tag.charCodeAt((i + 1 >> 0)) === 34))) {
 				break;
 			}
-			name$1 = tag.substring(0, i);
-			tag = tag.substring((i + 1 >> 0));
+			name$1 = $substring(tag, 0, i);
+			tag = $substring(tag, (i + 1 >> 0));
 			i = 1;
 			while (true) {
 				if (!(i < tag.length && !((tag.charCodeAt(i) === 34)))) { break; }
@@ -12487,8 +12563,8 @@ $packages["reflect"] = (function() {
 			if (i >= tag.length) {
 				break;
 			}
-			qvalue = tag.substring(0, (i + 1 >> 0));
-			tag = tag.substring((i + 1 >> 0));
+			qvalue = $substring(tag, 0, (i + 1 >> 0));
+			tag = $substring(tag, (i + 1 >> 0));
 			if (key === name$1) {
 				_tuple = strconv.Unquote(qvalue);
 				value$1 = _tuple[0];
@@ -14351,7 +14427,7 @@ $packages["reflect"] = (function() {
 	return $pkg;
 })();
 $packages["fmt"] = (function() {
-	var $pkg = {}, $init, errors, io, math, os, reflect, strconv, sync, utf8, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, scanError, ss, ssave, sliceType, ptrType, ptrType$1, arrayType, arrayType$1, sliceType$1, sliceType$2, ptrType$2, ptrType$5, ptrType$25, funcType, ppFree, byteType, space, ssFree, complexError, boolError, newPrinter, Sprintf, Errorf, Sprint, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
+	var $pkg = {}, $init, errors, io, math, os, reflect, strconv, sync, utf8, fmtFlags, fmt, State, Formatter, Stringer, GoStringer, buffer, pp, scanError, ss, ssave, sliceType, ptrType, ptrType$1, arrayType, arrayType$1, sliceType$1, sliceType$2, ptrType$2, ptrType$5, ptrType$25, funcType, ppFree, byteType, space, ssFree, complexError, boolError, newPrinter, Sprintf, Errorf, Sprint, Fprintln, Println, getField, tooLarge, parsenum, intFromArg, parseArgNumber, isSpace, notSpace, indexRune;
 	errors = $packages["errors"];
 	io = $packages["io"];
 	math = $packages["math"];
@@ -14729,7 +14805,7 @@ $packages["fmt"] = (function() {
 				i = _i;
 				n = n - (1) >> 0;
 				if (n < 0) {
-					return s.substring(0, i);
+					return $substring(s, 0, i);
 				}
 				_i += _rune[1];
 			}
@@ -15037,6 +15113,38 @@ $packages["fmt"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Sprint }; } $f.$ptr = $ptr; $f._r = _r; $f.a = a; $f.p = p; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Sprint = Sprint;
+	Fprintln = function(w, a) {
+		var $ptr, _r, _r$1, _tuple, a, err, n, p, w, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; a = $f.a; err = $f.err; n = $f.n; p = $f.p; w = $f.w; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_r = newPrinter(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		p = _r;
+		$r = p.doPrintln(a); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		_r$1 = w.Write((x = p.buf, $subslice(new sliceType$2(x.$array), x.$offset, x.$offset + x.$length))); /* */ $s = 3; case 3: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_tuple = _r$1;
+		n = _tuple[0];
+		err = _tuple[1];
+		p.free();
+		$s = -1; return [n, err];
+		return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Fprintln }; } $f.$ptr = $ptr; $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f.a = a; $f.err = err; $f.n = n; $f.p = p; $f.w = w; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Fprintln = Fprintln;
+	Println = function(a) {
+		var $ptr, _r, _tuple, a, err, n, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _tuple = $f._tuple; a = $f.a; err = $f.err; n = $f.n; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_r = Fprintln(os.Stdout, a); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		n = _tuple[0];
+		err = _tuple[1];
+		$s = -1; return [n, err];
+		return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Println }; } $f.$ptr = $ptr; $f._r = _r; $f._tuple = _tuple; $f.a = a; $f.err = err; $f.n = n; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Println = Println;
 	getField = function(v, i) {
 		var $ptr, _r, _r$1, i, v, val, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _r = $f._r; _r$1 = $f._r$1; i = $f.i; v = $f.v; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -16123,7 +16231,7 @@ $packages["fmt"] = (function() {
 			return [newArgNum, newi, found];
 		}
 		p.reordered = true;
-		_tuple = parseArgNumber(format.substring(i));
+		_tuple = parseArgNumber($substring(format, i));
 		index = _tuple[0];
 		wid = _tuple[1];
 		ok = _tuple[2];
@@ -16180,7 +16288,7 @@ $packages["fmt"] = (function() {
 				i = i + (1) >> 0;
 			}
 			if (i > lasti) {
-				(p.$ptr_buf || (p.$ptr_buf = new ptrType$1(function() { return this.$target.buf; }, function($v) { this.$target.buf = $v; }, p))).WriteString(format.substring(lasti, i));
+				(p.$ptr_buf || (p.$ptr_buf = new ptrType$1(function() { return this.$target.buf; }, function($v) { this.$target.buf = $v; }, p))).WriteString($substring(format, lasti, i));
 			}
 			if (i >= end) {
 				/* break; */ $s = 2; continue;
@@ -16315,7 +16423,7 @@ $packages["fmt"] = (function() {
 				(p.$ptr_buf || (p.$ptr_buf = new ptrType$1(function() { return this.$target.buf; }, function($v) { this.$target.buf = $v; }, p))).WriteString("%!(NOVERB)");
 				/* break; */ $s = 2; continue;
 			}
-			_tuple$7 = utf8.DecodeRuneInString(format.substring(i));
+			_tuple$7 = utf8.DecodeRuneInString($substring(format, i));
 			verb = _tuple$7[0];
 			w = _tuple$7[1];
 			i = i + (w) >> 0;
@@ -16408,6 +16516,28 @@ $packages["fmt"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: pp.ptr.prototype.doPrint }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._ref = _ref; $f._v = _v; $f.a = a; $f.arg = arg; $f.argNum = argNum; $f.isString = isString; $f.p = p; $f.prevString = prevString; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	pp.prototype.doPrint = function(a) { return this.$val.doPrint(a); };
+	pp.ptr.prototype.doPrintln = function(a) {
+		var $ptr, _i, _ref, a, arg, argNum, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _i = $f._i; _ref = $f._ref; a = $f.a; arg = $f.arg; argNum = $f.argNum; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_ref = a;
+		_i = 0;
+		/* while (true) { */ case 1:
+			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 2; continue; }
+			argNum = _i;
+			arg = ((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]);
+			if (argNum > 0) {
+				(p.$ptr_buf || (p.$ptr_buf = new ptrType$1(function() { return this.$target.buf; }, function($v) { this.$target.buf = $v; }, p))).WriteByte(32);
+			}
+			$r = p.printArg(arg, 118); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			_i++;
+		/* } */ $s = 1; continue; case 2:
+		(p.$ptr_buf || (p.$ptr_buf = new ptrType$1(function() { return this.$target.buf; }, function($v) { this.$target.buf = $v; }, p))).WriteByte(10);
+		$s = -1; return;
+		return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: pp.ptr.prototype.doPrintln }; } $f.$ptr = $ptr; $f._i = _i; $f._ref = _ref; $f.a = a; $f.arg = arg; $f.argNum = argNum; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	pp.prototype.doPrintln = function(a) { return this.$val.doPrintln(a); };
 	ss.ptr.prototype.Read = function(buf) {
 		var $ptr, _tmp, _tmp$1, buf, err, n, s;
 		n = 0;
@@ -16847,7 +16977,7 @@ $packages["strings"] = (function() {
 				break;
 			}
 			n = n + (1) >> 0;
-			s = s.substring((pos + sep.length >> 0));
+			s = $substring(s, (pos + sep.length >> 0));
 		}
 		return n;
 	};
@@ -16882,8 +17012,8 @@ $packages["strings"] = (function() {
 			$s = -1; return "";
 			return "";
 		}
-		$s = -1; return s.substring(i);
-		return s.substring(i);
+		$s = -1; return $substring(s, i);
+		return $substring(s, i);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: TrimLeftFunc }; } $f.$ptr = $ptr; $f._r = _r; $f.f = f; $f.i = i; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.TrimLeftFunc = TrimLeftFunc;
@@ -16896,7 +17026,7 @@ $packages["strings"] = (function() {
 			wid = 1;
 			r = (s.charCodeAt(start) >> 0);
 			if (r >= 128) {
-				_tuple = utf8.DecodeRuneInString(s.substring(start));
+				_tuple = utf8.DecodeRuneInString($substring(s, start));
 				r = _tuple[0];
 				wid = _tuple[1];
 			}
@@ -16953,19 +17083,19 @@ $packages["strings"] = (function() {
 			j = start;
 			if (old.length === 0) {
 				if (i > 0) {
-					_tuple = utf8.DecodeRuneInString(s.substring(start));
+					_tuple = utf8.DecodeRuneInString($substring(s, start));
 					wid = _tuple[1];
 					j = j + (wid) >> 0;
 				}
 			} else {
-				j = j + (Index(s.substring(start), old)) >> 0;
+				j = j + (Index($substring(s, start), old)) >> 0;
 			}
-			w = w + ($copyString($subslice(t, w), s.substring(start, j))) >> 0;
+			w = w + ($copyString($subslice(t, w), $substring(s, start, j))) >> 0;
 			w = w + ($copyString($subslice(t, w), new$1)) >> 0;
 			start = j + old.length >> 0;
 			i = i + (1) >> 0;
 		}
-		w = w + ($copyString($subslice(t, w), s.substring(start))) >> 0;
+		w = w + ($copyString($subslice(t, w), $substring(s, start))) >> 0;
 		return $bytesToString($subslice(t, 0, w));
 	};
 	$pkg.Replace = Replace;
@@ -18585,7 +18715,7 @@ $packages["github.com/bep/gr/evt"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
-$packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
+$packages["github.com/nilsmagnus/bytearrays"] = (function() {
 	var $pkg = {}, $init, fmt, gr, el, evt, strconv, strings, time, rawValue, ptrType, sliceType, sliceType$1, sliceType$2, sliceType$3, sliceType$4, main, decodeLongFromHex, encodeFromLong;
 	fmt = $packages["fmt"];
 	gr = $packages["github.com/bep/gr"];
@@ -18594,7 +18724,7 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 	strconv = $packages["strconv"];
 	strings = $packages["strings"];
 	time = $packages["time"];
-	rawValue = $pkg.rawValue = $newType(0, $kindStruct, "main.rawValue", true, "bitbucket.org/nilsmagnus/hbaseutils", false, function(This_) {
+	rawValue = $pkg.rawValue = $newType(0, $kindStruct, "main.rawValue", true, "github.com/nilsmagnus/bytearrays", false, function(This_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.This = ptrType.nil;
@@ -18684,64 +18814,66 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: encodeFromLong }; } $f.$ptr = $ptr; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._ref = _ref; $f._rune = _rune; $f.k = k; $f.long2Hex = long2Hex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.v = v; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	rawValue.ptr.prototype.Render = function() {
-		var $ptr, _arg, _arg$1, _arg$10, _arg$2, _arg$3, _arg$4, _arg$5, _arg$6, _arg$7, _arg$8, _arg$9, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _tuple, c, decodedLongValue, elem, err, longAsHex, longValue, prettyLongBytes, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$10 = $f._arg$10; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _arg$6 = $f._arg$6; _arg$7 = $f._arg$7; _arg$8 = $f._arg$8; _arg$9 = $f._arg$9; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _tuple = $f._tuple; c = $f.c; decodedLongValue = $f.decodedLongValue; elem = $f.elem; err = $f.err; longAsHex = $f.longAsHex; longValue = $f.longValue; prettyLongBytes = $f.prettyLongBytes; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _arg, _arg$1, _arg$10, _arg$2, _arg$3, _arg$4, _arg$5, _arg$6, _arg$7, _arg$8, _arg$9, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _tuple, c, decodedLongValue, elem, err, longAsHex, longValue, prettyLongBytes, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$10 = $f._arg$10; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _arg$4 = $f._arg$4; _arg$5 = $f._arg$5; _arg$6 = $f._arg$6; _arg$7 = $f._arg$7; _arg$8 = $f._arg$8; _arg$9 = $f._arg$9; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _tuple = $f._tuple; c = $f.c; decodedLongValue = $f.decodedLongValue; elem = $f.elem; err = $f.err; longAsHex = $f.longAsHex; longValue = $f.longValue; prettyLongBytes = $f.prettyLongBytes; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = [c];
 		c[0] = $clone(this, rawValue);
-		_tuple = strconv.ParseUint(new gr.State(c[0].This.State()).String("longValue"), 10, 64);
+		_r = fmt.Println(new sliceType$2([new $String("hahadsf")])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r;
+		_tuple = strconv.ParseInt(new gr.State(c[0].This.State()).String("longValue"), 10, 64);
 		longValue = _tuple[0];
 		err = _tuple[1];
 		longAsHex = new gr.State(c[0].This.State()).String("longAsHex");
-		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 1:
-			_r = err.Error(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			console.log(_r);
-			longValue = new $Uint64(0, 0);
-		/* } */ case 2:
-		_r$1 = encodeFromLong(longValue); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		prettyLongBytes = _r$1;
-		_r$2 = decodeLongFromHex(longAsHex); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		decodedLongValue = _r$2;
-		_r$3 = fmt.Sprintf("Current time in millis: %d (%v)", new sliceType$2([$div64(time.Now().UnixNano(), new $Int64(0, 1000000), false), (x = time.Now(), new x.constructor.elem(x))])); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-		_r$4 = gr.Text(new $String(_r$3)); /* */ $s = 7; case 7: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-		_r$5 = el.Div(new sliceType$3([_r$4])); /* */ $s = 8; case 8: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-		_arg = _r$5;
-		_r$6 = el.Break(new sliceType$3([])); /* */ $s = 9; case 9: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
-		_arg$1 = _r$6;
-		_r$7 = gr.Text(new $String("Long to hbase hex:")); /* */ $s = 10; case 10: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
-		_arg$2 = _r$7;
-		_r$8 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("maxLength", new $String("19")), gr.Prop("value", longValue), evt.Change((function(c) { return function(event) {
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
+			_r$1 = err.Error(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			console.log(_r$1);
+			longValue = new $Int64(0, 0);
+		/* } */ case 3:
+		_r$2 = encodeFromLong(longValue); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		prettyLongBytes = _r$2;
+		_r$3 = decodeLongFromHex(longAsHex); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		decodedLongValue = _r$3;
+		_r$4 = fmt.Sprintf("Current time in millis: %d (%v)", new sliceType$2([$div64(time.Now().UnixNano(), new $Int64(0, 1000000), false), (x = time.Now(), new x.constructor.elem(x))])); /* */ $s = 7; case 7: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		_r$5 = gr.Text(new $String(_r$4)); /* */ $s = 8; case 8: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+		_r$6 = el.Div(new sliceType$3([_r$5])); /* */ $s = 9; case 9: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+		_arg = _r$6;
+		_r$7 = el.Break(new sliceType$3([])); /* */ $s = 10; case 10: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+		_arg$1 = _r$7;
+		_r$8 = gr.Text(new $String("Long to hbase hex:")); /* */ $s = 11; case 11: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+		_arg$2 = _r$8;
+		_r$9 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("maxLength", new $String("19")), gr.Prop("value", longValue), evt.Change((function(c) { return function(event) {
 			var $ptr, event, newValue;
 			newValue = event.TargetValue();
 			c[0].This.SetState($makeMap($String.keyFor, [{ k: "longValue", v: new $jsObjectPtr(newValue) }]));
-		}; })(c))])); /* */ $s = 11; case 11: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
-		_arg$3 = _r$8;
-		_r$9 = fmt.Sprintf("=> %s", new sliceType$2([new $String(prettyLongBytes)])); /* */ $s = 12; case 12: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
-		_r$10 = gr.Text(new $String(_r$9)); /* */ $s = 13; case 13: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
-		_arg$4 = _r$10;
-		_r$11 = el.Div(new sliceType$3([_arg$2, _arg$3, _arg$4])); /* */ $s = 14; case 14: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
-		_arg$5 = _r$11;
-		_r$12 = el.Break(new sliceType$3([])); /* */ $s = 15; case 15: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
-		_arg$6 = _r$12;
-		_r$13 = gr.Text(new $String("Hbase hex to long:")); /* */ $s = 16; case 16: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
-		_arg$7 = _r$13;
-		_r$14 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("value", new $String(longAsHex)), evt.Change((function(c) { return function(event) {
+		}; })(c))])); /* */ $s = 12; case 12: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
+		_arg$3 = _r$9;
+		_r$10 = fmt.Sprintf("=> %s", new sliceType$2([new $String(prettyLongBytes)])); /* */ $s = 13; case 13: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+		_r$11 = gr.Text(new $String(_r$10)); /* */ $s = 14; case 14: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
+		_arg$4 = _r$11;
+		_r$12 = el.Div(new sliceType$3([_arg$2, _arg$3, _arg$4])); /* */ $s = 15; case 15: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+		_arg$5 = _r$12;
+		_r$13 = el.Break(new sliceType$3([])); /* */ $s = 16; case 16: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
+		_arg$6 = _r$13;
+		_r$14 = gr.Text(new $String("Hbase hex to long:")); /* */ $s = 17; case 17: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
+		_arg$7 = _r$14;
+		_r$15 = el.Input(new sliceType$3([gr.Style("width", new $String("400px")), gr.Prop("type", new $String("text")), gr.Prop("value", new $String(longAsHex)), evt.Change((function(c) { return function(event) {
 			var $ptr, event, newValue;
 			newValue = event.TargetValue();
 			c[0].This.SetState($makeMap($String.keyFor, [{ k: "longAsHex", v: new $jsObjectPtr(newValue) }]));
-		}; })(c))])); /* */ $s = 17; case 17: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
-		_arg$8 = _r$14;
-		_r$15 = fmt.Sprintf("=> %d", new sliceType$2([decodedLongValue])); /* */ $s = 18; case 18: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
-		_r$16 = gr.Text(new $String(_r$15)); /* */ $s = 19; case 19: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
-		_arg$9 = _r$16;
-		_r$17 = el.Div(new sliceType$3([_arg$7, _arg$8, _arg$9])); /* */ $s = 20; case 20: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
-		_arg$10 = _r$17;
-		_r$18 = el.Div(new sliceType$3([_arg, _arg$1, _arg$5, _arg$6, _arg$10])); /* */ $s = 21; case 21: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
-		elem = _r$18;
+		}; })(c))])); /* */ $s = 18; case 18: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+		_arg$8 = _r$15;
+		_r$16 = fmt.Sprintf("=> %d", new sliceType$2([decodedLongValue])); /* */ $s = 19; case 19: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+		_r$17 = gr.Text(new $String(_r$16)); /* */ $s = 20; case 20: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+		_arg$9 = _r$17;
+		_r$18 = el.Div(new sliceType$3([_arg$7, _arg$8, _arg$9])); /* */ $s = 21; case 21: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+		_arg$10 = _r$18;
+		_r$19 = el.Div(new sliceType$3([_arg, _arg$1, _arg$5, _arg$6, _arg$10])); /* */ $s = 22; case 22: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
+		elem = _r$19;
 		$s = -1; return elem;
 		return elem;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: rawValue.ptr.prototype.Render }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$10 = _arg$10; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._arg$6 = _arg$6; $f._arg$7 = _arg$7; $f._arg$8 = _arg$8; $f._arg$9 = _arg$9; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._tuple = _tuple; $f.c = c; $f.decodedLongValue = decodedLongValue; $f.elem = elem; $f.err = err; $f.longAsHex = longAsHex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: rawValue.ptr.prototype.Render }; } $f.$ptr = $ptr; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$10 = _arg$10; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._arg$4 = _arg$4; $f._arg$5 = _arg$5; $f._arg$6 = _arg$6; $f._arg$7 = _arg$7; $f._arg$8 = _arg$8; $f._arg$9 = _arg$9; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._tuple = _tuple; $f.c = c; $f.decodedLongValue = decodedLongValue; $f.elem = elem; $f.err = err; $f.longAsHex = longAsHex; $f.longValue = longValue; $f.prettyLongBytes = prettyLongBytes; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	rawValue.prototype.Render = function() { return this.$val.Render(); };
 	rawValue.ptr.prototype.ShouldComponentUpdate = function(next) {
@@ -18775,10 +18907,10 @@ $packages["bitbucket.org/nilsmagnus/hbaseutils"] = (function() {
 	return $pkg;
 })();
 $synthesizeMethods();
-var $mainPkg = $packages["bitbucket.org/nilsmagnus/hbaseutils"];
+var $mainPkg = $packages["github.com/nilsmagnus/bytearrays"];
 $packages["runtime"].$init();
 $go($mainPkg.$init, [], true);
 $flushConsole();
 
 }).call(this);
-//# sourceMappingURL=hbaseutils.js.map
+//# sourceMappingURL=bytearrays.js.map
