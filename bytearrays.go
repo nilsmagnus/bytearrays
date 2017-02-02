@@ -10,10 +10,15 @@ import (
 	"github.com/bep/gr/evt"
 	"strings"
 	"encoding/hex"
+	"regexp"
 )
 
 func decodeLongFromHex(hex string) uint64 {
 	purified := strings.TrimLeft(strings.Replace(hex, "\\x", "", 100), "0")
+	reg := regexp.MustCompile("[^a-fA-F0-9]")
+	for _, nonHexLetter := range reg.FindAllString(purified, 100) {
+		purified = strings.Replace(purified, string(nonHexLetter), fmt.Sprintf("%x", nonHexLetter), 1)
+	}
 	res, err := strconv.ParseUint(fmt.Sprint("0x", purified), 0, 64)
 	if err != nil {
 		println(err.Error())
