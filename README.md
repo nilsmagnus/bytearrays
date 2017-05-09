@@ -1,4 +1,4 @@
-#Bytearrays
+# Bytearrays
 
 A simple converter to convert byte-arrays from and to hbase format. Convenient if your data is stored as byte-array representation of long/string/doubles.
 
